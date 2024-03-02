@@ -9,11 +9,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.interactions.WheelInput;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-public class AppTest {
+public class BisTests {
 
     WebDriver driver = new EdgeDriver();
 
@@ -32,25 +33,55 @@ public class AppTest {
 
     }
 
+    public void openBis(){
+        WebElement bis = driver.findElement(By.id("/bis-header-button"));
+        bis.click();
+    }
+
     @Test
     public void BisIsClickableAndDisplaysForm(){
        // WebDriver driver = new EdgeDriver();
        // driver.get("https://d2r3v7evrrggno.cloudfront.net/");
 
         WebElement bis = driver.findElement(By.id("/bis-header-button"));
+        WebElement collapse = driver.findElement(By.id("collapse-0"));
+
+        Assert.assertFalse(collapse.isDisplayed());
+
         bis.click();
 
-        WebElement collapse = driver.findElement(By.id("collapse-0"));
         Assert.assertTrue(collapse.isDisplayed());
 
         //driver.quit();
     }
 
     @Test
+    public void BisFormDisplaysCorrectly(){
+
+        openBis();
+
+        WebElement genderYes = driver.findElement(By.id("/bis-yes-0"));
+        WebElement genderNo = driver.findElement(By.id("/bis-no-0"));
+        WebElement birthdayYes = driver.findElement(By.id("/bis-yes-1"));
+        WebElement birthdayNo = driver.findElement(By.id("/bis-no-1"));
+        WebElement date = driver.findElement(By.id("/bis-2"));
+        WebElement amount = driver.findElement(By.id("/bis-3"));
+
+        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+        wait.until(d -> amount.isDisplayed());
+        Assert.assertTrue(genderYes.isDisplayed());
+        Assert.assertTrue(genderNo.isDisplayed());
+        Assert.assertTrue(birthdayYes.isDisplayed());
+        Assert.assertTrue(birthdayNo.isDisplayed());
+        Assert.assertTrue(date.isDisplayed());
+        Assert.assertTrue(amount.isDisplayed());
+
+    }
+
+    @Test
     public void DisplaysOutputWhenClicked(){
 
-        WebElement bis = driver.findElement(By.id("/bis-header-button"));
-        bis.click();
+        openBis();
         Wait(1);
         //WebElement amount = driver.findElement(By.id("/bis-3"));
         //amount.sendKeys("5");
@@ -70,8 +101,7 @@ public class AppTest {
 
     @Test
     public void IsBirthdayKnownDisablesDatePicker(){
-        WebElement bis = driver.findElement(By.id("/bis-header-button"));
-        bis.click();
+        openBis();
         Wait(1);
 
         WebElement datePicker = driver.findElement(By.id("/bis-2"));
@@ -84,13 +114,13 @@ public class AppTest {
 
     @Test
     public void MoreInfoShowsMoreInfo(){
-        WebElement bis = driver.findElement(By.id("/bis-header-button"));
-        bis.click();
+        openBis();
         Wait(1);
         WebElement info = driver.findElement(By.id("bis-collapseExample"));
         Assert.assertFalse(info.isDisplayed());
         WebElement infoButton = driver.findElement(By.id("bis"));
         infoButton.click();
+        Wait(1);
         Assert.assertTrue(info.isDisplayed());
     }
 
