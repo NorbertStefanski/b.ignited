@@ -57,6 +57,13 @@ public class GeneratorPage {
         return form.findElements(By.tagName("input"));
     }
 
+    public List<WebElement> getClearButtons(Values value)
+    {
+        List<WebElement> forms =  driver.findElements(By.tagName("app-form"));
+        WebElement form = forms.get(value.value);
+        return form.findElements(By.className("clear-button-pos"));
+    }
+
     public int getOutputAmount(Values value){
         String text = getOutput(value).getText();
         String[] array = text.split("\\s+");

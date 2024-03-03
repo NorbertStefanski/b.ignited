@@ -108,6 +108,18 @@ public class BisTests extends BaseTestClass {
         Assert.assertEquals(5, page.getOutputAmount(Values.BIS));
     }
 
+    @Test
+    public void clearButtonClears(){
+        page.openCollapse(Values.BIS);
+
+        WebElement amount = page.getInputElements(Values.BIS).get(5);
+        amount.sendKeys("5");
+        page.scrollDown(300);
+        page.getClearButtons(Values.BIS).get(1).click();
+
+        Assert.assertEquals("", amount.getText());
+    }
+
 
 }
 
