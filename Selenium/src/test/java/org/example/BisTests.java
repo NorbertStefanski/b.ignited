@@ -13,115 +13,102 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 
-public class BisTests {
+public class BisTests extends BaseTestClass {
 
-    WebDriver driver = new EdgeDriver();
-
-    @BeforeEach
-    public void StartTest(){
-        driver.get("https://d2r3v7evrrggno.cloudfront.net/");
-    }
-
-    @AfterEach
-    public void CloseTest(){
-        driver.quit();
-    }
-
-    public void Wait(int seconds){
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(seconds));
-
-    }
-
-    public void openBis(){
-        WebElement bis = driver.findElement(By.id("/bis-header-button"));
-        bis.click();
-    }
 
     @Test
-    public void BisIsClickableAndDisplaysForm(){
-       // WebDriver driver = new EdgeDriver();
-       // driver.get("https://d2r3v7evrrggno.cloudfront.net/");
-
-        WebElement bis = driver.findElement(By.id("/bis-header-button"));
-        WebElement collapse = driver.findElement(By.id("collapse-0"));
-
-        Assert.assertFalse(collapse.isDisplayed());
-
-        bis.click();
-
+    public void bisIsClickableAndDisplaysForm(){
+        WebElement collapse = page.getCollapse(Values.BIS);
+        page.openCollapse(Values.BIS);
         Assert.assertTrue(collapse.isDisplayed());
-
-        //driver.quit();
     }
 
     @Test
-    public void BisFormDisplaysCorrectly(){
+    public void bisDoesntDisplayFormUnlessClicked(){
+        WebElement collapse = page.getCollapse(Values.BIS);
+        Assert.assertFalse(collapse.isDisplayed());
+    }
 
-        openBis();
+    @Test
+    public void bisFormDisplaysCorrectly(){
+        page.openCollapse(Values.BIS);
 
-        WebElement genderYes = driver.findElement(By.id("/bis-yes-0"));
-        WebElement genderNo = driver.findElement(By.id("/bis-no-0"));
-        WebElement birthdayYes = driver.findElement(By.id("/bis-yes-1"));
-        WebElement birthdayNo = driver.findElement(By.id("/bis-no-1"));
-        WebElement date = driver.findElement(By.id("/bis-2"));
-        WebElement amount = driver.findElement(By.id("/bis-3"));
+        List<WebElement> inputs = page.getInputElements(Values.BIS);
+        WebElement generateButton = page.getGenerateButton(Values.BIS);
 
-        Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(2));
-        wait.until(d -> amount.isDisplayed());
-        Assert.assertTrue(genderYes.isDisplayed());
-        Assert.assertTrue(genderNo.isDisplayed());
-        Assert.assertTrue(birthdayYes.isDisplayed());
-        Assert.assertTrue(birthdayNo.isDisplayed());
-        Assert.assertTrue(date.isDisplayed());
-        Assert.assertTrue(amount.isDisplayed());
+        page.await(2, generateButton);
+
+        Assert.assertTrue(inputs.get(0).isDisplayed());
+        Assert.assertTrue(inputs.get(1).isDisplayed());
+        Assert.assertTrue(inputs.get(2).isDisplayed());
+        Assert.assertTrue(inputs.get(3).isDisplayed());
+        Assert.assertTrue(inputs.get(4).isDisplayed());
+        Assert.assertTrue(inputs.get(5).isDisplayed());
+        Assert.assertTrue(generateButton.isDisplayed());
 
     }
 
     @Test
     public void DisplaysOutputWhenClicked(){
-
-        openBis();
-        Wait(1);
-        //WebElement amount = driver.findElement(By.id("/bis-3"));
-        //amount.sendKeys("5");
-        WebElement button = driver.findElement(By.id("/bis-generate-button"));
+        page.openCollapse(Values.BIS);
+        WebElement generateButton = page.getGenerateButton(Values.BIS);
 
         Actions actions = new Actions(driver);
-        //actions.scrollToElement(button).perform();
         actions.scrollByAmount(0,300).perform();
-       // WheelInput.ScrollOrigin scrollOrigin = WheelInput.ScrollOrigin.fromElement(button);
-       // actions.scrollFromOrigin(scrollOrigin, 0, 150).perform();
+        generateButton.click();
 
-        button.click();
-        WebElement output = driver.findElement(By.id("bis-text"));
-
+        WebElement output = page.getOutput(Values.BIS);
         Assert.assertTrue(output.isDisplayed());
     }
 
     @Test
     public void IsBirthdayKnownDisablesDatePicker(){
-        openBis();
-        Wait(1);
+        page.openCollapse(Values.BIS);
+        List<WebElement> inputs = page.getInputElements(Values.BIS);
+        WebElement datePicker = inputs.get(4);
+        WebElement radioNo = inputs.get(3);
 
-        WebElement datePicker = driver.findElement(By.id("/bis-2"));
-        Assert.assertTrue(datePicker.isEnabled());
-
-        WebElement radioNo = driver.findElement(By.id("/bis-no-1"));
         radioNo.click();
+
         Assert.assertFalse(datePicker.isEnabled());
     }
 
     @Test
-    public void MoreInfoShowsMoreInfo(){
-        openBis();
-        Wait(1);
-        WebElement info = driver.findElement(By.id("bis-collapseExample"));
+    public void moreInfoIsHiddenUnlessClicked(){
+        page.openCollapse(Values.BIS);
+        WebElement info = page.getInfo(Values.BIS);
+
         Assert.assertFalse(info.isDisplayed());
-        WebElement infoButton = driver.findElement(By.id("bis"));
+    }
+
+    @Test
+    public void moreInfoShowsMoreInfoOnClick(){
+        page.openCollapse(Values.BIS);
+        WebElement info = page.getInfo(Values.BIS);
+        WebElement infoButton = page.getInfoButton(Values.BIS);
+
         infoButton.click();
-        Wait(1);
+
         Assert.assertTrue(info.isDisplayed());
+
+    }
+
+    @Test
+    public void outputDisplaysCorrectAmount(){
+        page.openCollapse(Values.BIS);
+
+        WebElement button = page.getGenerateButton(Values.BIS);
+        List<WebElement> inputs = page.getInputElements(Values.BIS);
+        WebElement amount = inputs.get(5);
+        amount.sendKeys("5");
+
+        Actions actions = new Actions(driver);
+        actions.scrollByAmount(0,300).perform();
+        button.click();
+
+        Assert.assertEquals(5, page.getOutputAmount(Values.BIS));
     }
 
 
