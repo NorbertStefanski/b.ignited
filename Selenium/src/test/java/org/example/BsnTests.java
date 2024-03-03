@@ -11,7 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 
-public class BsnTests extends BaseTestClass{
+public class BsnTests extends BaseTestClass {
 
     @Test
     public void bsnIsClickableAndDisplaysForm(){

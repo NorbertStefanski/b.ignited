@@ -3,6 +3,7 @@ package org.example;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -66,5 +67,10 @@ public class GeneratorPage {
         Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(seconds));
         wait.until(d -> element.isDisplayed());
 
+    }
+
+    public void scrollDown(int number){
+        Actions actions = new Actions(driver);
+        actions.scrollByAmount(0,number).perform();
     }
 }

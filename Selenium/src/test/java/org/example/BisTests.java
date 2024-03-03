@@ -17,7 +17,6 @@ import java.util.List;
 
 public class BisTests extends BaseTestClass {
 
-
     @Test
     public void bisIsClickableAndDisplaysForm(){
         WebElement collapse = page.getCollapse(Values.BIS);
@@ -55,8 +54,7 @@ public class BisTests extends BaseTestClass {
         page.openCollapse(Values.BIS);
         WebElement generateButton = page.getGenerateButton(Values.BIS);
 
-        Actions actions = new Actions(driver);
-        actions.scrollByAmount(0,300).perform();
+        page.scrollDown(300);
         generateButton.click();
 
         WebElement output = page.getOutput(Values.BIS);
@@ -104,8 +102,7 @@ public class BisTests extends BaseTestClass {
         WebElement amount = inputs.get(5);
         amount.sendKeys("5");
 
-        Actions actions = new Actions(driver);
-        actions.scrollByAmount(0,300).perform();
+        page.scrollDown(300);
         button.click();
 
         Assert.assertEquals(5, page.getOutputAmount(Values.BIS));
